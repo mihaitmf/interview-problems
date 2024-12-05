@@ -51,14 +51,17 @@ class PaymentService
 
 class DatabaseHandler
 {
-    public function run(string $query): void // suppose a query is executed
-    {}
+    public function run(string $query): void
+    {
+        // suppose a query is executed
+    }
 }
 
 class HttpClient
 {
-    public function post(string $url, string $requestBody): string // suppose a HTTP request is made
+    public function post(string $url, string $requestBody): string
     {
+        // suppose a HTTP request is made
         return '{"status": {"code": "000", "message": "Success"}, "auth_ref_code": 45876}';
     }
 }
