@@ -10,12 +10,13 @@ class Application {
 
     public function doSomething(string $key): string
     {
+        // ... other processing
+
         $value = $this->cache->get($key);
         if ($value !== '') {
             return $value;
         }
 
-        // ... some processing
         $value = $this->someTimeConsumingProcessing($key);
 
         $this->cache->set($key, $value);
@@ -25,6 +26,7 @@ class Application {
 
     private function someTimeConsumingProcessing(string $key): string
     {
+        // ... some processing (like a call to an external service or DB)
         return 'processed value';
     }
 }
@@ -82,14 +84,24 @@ class MemcacheAdapter implements Cache {
     }
 }
 
-function main($config = null)
-{
-    if ($config === 'Memcache') {
-        $cache = new MemcacheAdapter(new Memcache());
-    } else {
-        $cache = new RedisAdapter(new Redis());
+class CacheFactory {
+    public static function getCache(string $type): Cache
+    {
+        switch (strtolower($type)) {
+            case 'memcache':
+                return new MemcacheAdapter(new Memcache());
+            case 'redis':
+                return new RedisAdapter(new Redis());
+            default:
+                throw new InvalidArgumentException("Unknown cache type: $type");
+        }
     }
+}
 
+
+function main(string $config = 'redis')
+{
+    $cache = CacheFactory::getCache($config);
     $app = new Application($cache);
     print($app->doSomething('key'));
 }
